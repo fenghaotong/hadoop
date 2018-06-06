@@ -124,141 +124,15 @@ vi /etc/hosts
 - 配置slave
 - 发送hadoop文件到所有机子上
 
-**配置core-site.xml**
-```xml
-<configuration>
-<!--hdfs filesystem namespace-->
-    <property>
-        <name>fs.defaultFS</name>
-        <value>hadoop1:9000</value>
-    </property>
-<!--hdfs cache-->
-    <property>
-        <name>io.file.buffer.size</name>
-        <value>4096</value>
-    </property>
-<!--tmp data-->
-    <property>
-        <name>hadoop.tmp.dir</name>
-        <value>/home/htfeng/tmp/</value>
-    </property>
-    
-    <property>
-        <name>fs.hdfs.impl</name>
-        <value>org.apache.hadoop.hdfs.DistributedFileSystem</value>
-        <description>The FileSystem for hdfs: uris.</description>
-    </property>
-</configuration>
-```
+**[配置core-site.xml](hadoop基础知识.ipynb#配置core-site.xml)**
 
-**配置hadoop-hdfs-site.xml**
+**[配置hadoop-hdfs-site.xml](hadoop基础知识.ipynb#配置hadoop-hdfs-site.xml)**
 
-```xml
-<configuration>
-    <property>
-        <name>dfs.replication</name>
-        <value>3</value>
-    </property>
-    <property>
-        <name>dfs.block.size</name>
-        <value>134217728</value>
-    </property>
-    <property>
-        <name>dfs.namenode.name.dir</name>
-        <value>/home/htfeng/hadoopdata/dfs/name</value>
-    </property>
-    <property>
-        <name>dfs.datanode.data.dir</name>
-        <value>/home/htfeng/hadoopdata/dfs/data</value>
-    </property>
-    <property>
-        <name>dfs.checkpoint.dir</name>
-        <value>/home/htfeng/hadoopdata/checkpoint/dfs/name</value>
-    </property>
-    <property>
-        <name>dfs.http.address</name>
-        <value>hadoop1:50070</value>
-    </property>
-    <property>
-        <name>dfs.secondary.http.address</name>
-        <value>hadoop1:50090</value>
-    </property>
-    <property>
-        <name>dfs.webhdfs.enabled</name>
-        <value>false</value>
-    </property>
-    <property>
-        <name>dfs.permissions</name>
-        <value>false</value>
-    </property>
-</configuration>
+**[配置hadoop-mapred-site.xml](hadoop基础知识.ipynb#配置hadoop-mapred-site.xml)**
 
-```
+**[配置hadoop-yarn-site.xml](hadoop基础知识.ipynb#配置hadoop-yarn-site.xml)**
 
-**配置hadoop-mapred-site.xml**
-
-```xml
-<configuration>
-    <property>
-        <name>mapreduce.framework.name</name>
-        <value>yarn</value>
-    </property>
-    <property>
-        <name>mapreduce.jobhistory.address</name>
-        <value>hadoop1:10020</value>
-    </property>
-    <property>
-        <name>mapreduce.jobhistory.webapp.address</name>
-        <value>hadoop1:19888</value>
-    </property>
-</configuration>
-```
-
-**配置hadoop-yarn-site.xml**
-
-```xml
-<configuration>
-
-    <property>
-        <name>yarn.nodemanager.aux-services</name>
-        <value>mapreduce_shuffle</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.hostname</name>
-        <value>hadoop1</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.address</name>
-        <value>hadoop1:8032</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.scheduler.address</name>
-        <value>hadoop1:8030</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.resource-tracker.address</name>
-        <value>hadoop1:8031</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.admin.address</name>
-        <value>hadoop1:8033</value>
-    </property>
-    <property>
-        <name>yarn.resourcemanager.webapp.address</name>
-        <value>hadoop1:8088</value>
-    </property>
-</configuration>
-
-```
-
-**配置slave**
-
-```
-hadoop1
-hadoop2
-hadoop3
-
-```
+**[配置slave](hadoop基础知识.ipynb#配置slave)**
 
 ** 发送hadoop文件到所有机子上 **
 
@@ -389,3 +263,147 @@ vi /home/htfeng/zkdata/myid
 ```
 
 **[zookeeper测试](zookeeper.ipynb#zookeeper测试)**
+
+### HDFS的HA
+
+- [HDFS的HA基础讲解](HA.ipynb)
+
+**规划**
+
+|主机名称| IP地址 | 功能|
+|:---:|:----|:-----|
+|hadoop1|192.168.75.111|NameNode、DataNode、jouranlnode、quroumPeerMain、zkf|
+|hadoop2|192.168.75.111|DataNode、jouranlnode、quroumPeerMain、zkf|
+|hadoop3|192.168.75.111|DataNode、jouranlnode、quroumPeerMain|
+
+> 在配置HA之前，要对之前的配置做一个备份
+
+```
+mv /usr/local/hadoop-2.8.4/ /usr/local/hadoop-2.8.4_bak
+```
+
+#### [HA的配置](http://hadoop.apache.org/docs/r2.8.4/hadoop-project-dist/hadoop-hdfs/HDFSHighAvailabilityWithQJM.html)
+
+- 解压下载的hadoop，到/usr/local/目录下
+
+在/usr/local/hadoop-2.8.4/etc/hadoop/下
+- 配置hadoop-env.sh
+- 配置hadoop-core-site.xml
+- 配置hadoop-hdfs-site.xml
+- 配置slave
+- 发送hadoop文件到所有机子上
+- hadoop2也作为namenode免密登陆
+
+**[配置hadoop-env.sh](HA.ipynb#配置hadoop-env.sh)**
+
+**[配置hadoop-core-site.xml](HA.ipynb#配置hadoop-core-site.xml)**
+
+**[配置hadoop-hdfs-site.xml](HA.ipynb#配置hadoop-hdfs-site.xml)**
+
+**[配置slaves](HA.ipynb#配置slaves)**
+
+**发送hadoop文件到所有机子上**
+
+```
+scp -r ../hadoop-2.8.4/ hadoop2:/usr/local/
+scp -r ../hadoop-2.8.4/ hadoop3:/usr/local/
+```
+
+**hadoop2也作为namenode免密登陆**
+
+- 在hadoop2主机上
+
+```
+ssh-keygen -t rsa
+ssh-copy-id hadoop2
+ssh-copy-id hadoop1
+ssh-copy-id hadoop3
+```
+
+**按步骤依次执行下面程序**
+
+- 启动zk
+- 启动journalnode服务（单个启动、多个进程启动）
+```
+hadoop-daemon.sh start journalnode
+hadoop-daemons.sh start journalnode
+```
+
+- 挑选两个namenode中的一台进行格式化，然后并且启动
+```
+hdfs namenode -format
+hadoop-daemon.sh start namenode
+```
+- 在另一台namenode的机器上拉去元数据（也可以复制）
+```
+hdfs namenode -bootstrapStandby
+```
+- 格式化zk
+```
+hdfs zkfc -formatZK
+```
+- 启动
+
+```
+start-dfs.sh
+```
+> 会有五个进程，查看是否全部启动   
+> 查看webUI是否正(http://192.168.75.111:50070,http://192.168.75.112:50070)  
+> 在hdfs中的读写文件  
+> 然后关闭一个namenode失败，查看是否自动切换   
+
+```
+kill -9 [namenode pid]
+hadoop-daemon.sh start namenode
+```
+
+### Yarn的HA
+
+**规划**
+
+|主机名称| IP地址 | 功能|
+|:---:|:----|:-----|
+|hadoop1|192.168.75.111|resourcemanager、nodemanager、quroumPeerMain|
+|hadoop2|192.168.75.111|nodemanager、quroumPeerMain|
+|hadoop3|192.168.75.111|nodemanager、quroumPeerMain|
+
+#### HA的配置
+
+- [HA基础](HA.ipybnb)
+- 配置yarn-site.xml
+- 配置mapred-site.xml
+- 远程发送
+- 直接启动
+- 测试
+
+**[配置yarn-site.xml](HA.ipynb#配置yarn-site.xml)**
+
+**[配置mapred-site.xml](HA.ipynb#配置mapred-site.xml)**
+
+**远程发送**
+
+```
+scp -r ./etc/hadoop/mapred-site.xml ./etc/hadoop/yarn-site.xml hadoop2:/usr/local/hadoop-2.8.4/etc/hadoop/
+
+scp -r ./etc/hadoop/mapred-site.xml ./etc/hadoop/yarn-site.xml hadoop3:/usr/local/hadoop-2.8.4/etc/hadoop/
+```
+
+**直接启动**
+
+```
+#hadoop1
+start-yarn.sh
+#hadoop2
+yarn-daemon.sh start resourcemanager
+```
+
+**测试**
+
+```
+yarn jar ./share/hadoop/mapreduce/hadoop-mapreduce-examples-2.8.4.jar wordcount /words /out/00
+```
+
+
+```python
+
+```
