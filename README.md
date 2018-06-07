@@ -3,20 +3,19 @@
 
 - [hadoop基础知识](hadoop基础知识.ipynb)
 
-- java JDK(下载jdk解压配置环境变量)
-- nc(网络安全工具)
-- gcc
-- bashdb（下载bashdb, 配置、编译、安装）
-- apache
-- nginx
+### java JDK配置
+
+- 下载[JDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+- 解压jdk到/usr/local/目录下
+- 配置环境变量
 
 ### 节点规划
 
 |主机名称| IP地址 | 功能|
 |:---:|:----|:-----|
 |hadoop1|192.168.75.111|NameNode、DataNode、resourcemanager、nodemanager|
-|hadoop2|192.168.75.111|DataNode、nodemanager|
-|hadoop3|192.168.75.111|DataNode、nodemanager|
+|hadoop2|192.168.75.112|DataNode、nodemanager|
+|hadoop3|192.168.75.113|DataNode、nodemanager|
 
 ### 创建虚拟机配置网络
 
@@ -273,8 +272,8 @@ vi /home/htfeng/zkdata/myid
 |主机名称| IP地址 | 功能|
 |:---:|:----|:-----|
 |hadoop1|192.168.75.111|NameNode、DataNode、jouranlnode、quroumPeerMain、zkf|
-|hadoop2|192.168.75.111|DataNode、jouranlnode、quroumPeerMain、zkf|
-|hadoop3|192.168.75.111|DataNode、jouranlnode、quroumPeerMain|
+|hadoop2|192.168.75.112|DataNode、jouranlnode、quroumPeerMain、zkf|
+|hadoop3|192.168.75.113|DataNode、jouranlnode、quroumPeerMain|
 
 > 在配置HA之前，要对之前的配置做一个备份
 
@@ -364,8 +363,8 @@ hadoop-daemon.sh start namenode
 |主机名称| IP地址 | 功能|
 |:---:|:----|:-----|
 |hadoop1|192.168.75.111|resourcemanager、nodemanager、quroumPeerMain|
-|hadoop2|192.168.75.111|nodemanager、quroumPeerMain|
-|hadoop3|192.168.75.111|nodemanager、quroumPeerMain|
+|hadoop2|192.168.75.112|nodemanager、quroumPeerMain|
+|hadoop3|192.168.75.113|nodemanager、quroumPeerMain|
 
 #### HA的配置
 
